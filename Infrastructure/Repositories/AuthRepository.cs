@@ -10,7 +10,7 @@ namespace Infrastructure.Repositories
         private readonly LoveAtFirstBiteDbContext _context;
 
         public AuthRepository(LoveAtFirstBiteDbContext context)
-        {
+        { 
             _context = context;
         }
 
