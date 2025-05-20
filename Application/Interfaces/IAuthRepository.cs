@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Domain.Common;
+using Domain.Models;
 
 namespace Application.Interfaces
 {
@@ -7,9 +8,6 @@ namespace Application.Interfaces
         // Retrive a user by their username
         Task<User?> GetUserByUsernameAsync(string username);
 
-        // Retrive a user by their email
-        Task<User?> GetUserByEmailAsync(string email);
-
         // Checks if email is already registered in the system
         Task<bool> EmailExistsAsync(string email);
 
@@ -17,6 +15,6 @@ namespace Application.Interfaces
         Task CreateUserAsync(User user);
 
         // Saves pending changes to the database and wraps the result
-        //Task<OperationResult<bool>> SaveChangesAsync();
+        Task<OperationResult<bool>> SaveChangesAsync();
     }
 }
