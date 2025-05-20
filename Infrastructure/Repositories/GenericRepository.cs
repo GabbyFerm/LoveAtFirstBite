@@ -1,11 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Common;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -31,48 +26,94 @@ namespace Infrastructure.Repositories
             catch (Exception ex)
             {
                 // This captures the deeper cause
-                var errorMessage = ex.InnerException?.Message ?? ex.Message;
-                return OperationResult<T>.Failure(errorMessage);
+
+                return OperationResult<T>.Failure(GetExceptionMessage(ex));
             }
         }
 
 
         public async Task<OperationResult<bool>> DeleteByIdAsync(int id)
         {
-            var entity = await _dbSet.FindAsync(id);
             try
             {
+                var entity = await _dbSet.FindAsync(id);
+
+                if (entity == null)
+                {
+                    return OperationResult<bool>.Failure("Entity not found");
+                }
                 _dbSet.Remove(entity);
                 await _context.SaveChangesAsync();
                 return OperationResult<bool>.Success(true);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                return OperationResult<bool>.Failure("Entity not found");
+                return OperationResult<bool>.Failure(GetExceptionMessage(ex));
             }
-           
-          
+
+
         }
 
         public async Task<OperationResult<IEnumerable<T>>> GetAllAsync()
         {
-            var list = await _dbSet.ToListAsync();
-            return OperationResult<IEnumerable<T>>.Success(list);
+            try
+            {
+
+                var list = await _dbSet.ToListAsync();
+                return OperationResult<IEnumerable<T>>.Success(list);
+
+            }
+            catch (Exception ex)
+
+            {
+
+                return OperationResult<IEnumerable<T>>.Failure(GetExceptionMessage(ex));
+
+
+            }
+
         }
+
 
         public async Task<OperationResult<T>> GetByIdAsync(int id)
         {
-            var entity = await _dbSet.FindAsync(id);
-            return entity != null
-                ? OperationResult<T>.Success(entity)
-                : OperationResult<T>.Failure("Entity not found");
+            try
+            {
+
+                var entity = await _dbSet.FindAsync(id);
+                return entity != null
+                    ? OperationResult<T>.Success(entity)
+                    : OperationResult<T>.Failure("Entity not found");
+
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<T>.Failure(GetExceptionMessage(ex));
+            }
+
         }
 
         public async Task<OperationResult<T>> UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
-            return OperationResult<T>.Success(entity);
+
+            try
+            {
+                _dbSet.Update(entity);
+                await _context.SaveChangesAsync();
+                return OperationResult<T>.Success(entity);
+            }
+            catch (Exception ex)
+            {
+
+                return OperationResult<T>.Failure(GetExceptionMessage(ex));
+
+            }
+
+        }
+
+        private static string GetExceptionMessage(Exception ex)
+        {
+            return ex.InnerException?.Message ?? ex.Message;
         }
     }
 }

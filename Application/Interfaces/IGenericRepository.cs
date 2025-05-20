@@ -13,7 +13,7 @@ namespace Application.Interfaces
         Task<OperationResult<IEnumerable<T>>> GetAllAsync();
         Task<OperationResult<T>> AddAsync(T entity);
         Task<OperationResult<T>> UpdateAsync(T entity);
-        Task<OperationResult<bool>> DeleteAsync(int id);
+        Task<OperationResult<bool>> DeleteByIdAsync(int id);
         //Task<OperationResult<bool>> SaveChangesAsync();
     }
 }
