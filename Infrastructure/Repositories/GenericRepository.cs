@@ -37,17 +37,21 @@ namespace Infrastructure.Repositories
         }
 
 
-        public async Task<OperationResult<bool>> DeleteAsync(int id)
+        public async Task<OperationResult<bool>> DeleteByIdAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);
-            if (entity == null)
+            try
+            {
+                _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+                return OperationResult<bool>.Success(true);
+            }
+            catch (Exception ex) 
             {
                 return OperationResult<bool>.Failure("Entity not found");
             }
-
-            _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
-            return OperationResult<bool>.Success(true);
+           
+          
         }
 
         public async Task<OperationResult<IEnumerable<T>>> GetAllAsync()
