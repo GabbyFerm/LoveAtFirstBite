@@ -1,5 +1,5 @@
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using Application;
+using Infrastructure;
 
 namespace API
 {
@@ -9,10 +9,12 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
 
-            builder.Services.AddDbContext<LoveAtFirstBiteDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            // Add services from Application and Infrastructure
+            builder.Services.AddApplicationServices();
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -28,12 +30,8 @@ namespace API
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }
