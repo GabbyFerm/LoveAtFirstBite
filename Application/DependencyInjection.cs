@@ -1,23 +1,33 @@
-﻿using Application.Validators;
+﻿using Application.Authorize.Queries;
+using Application.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
-{
-    public static class DependencyInjection
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        public static class DependencyInjection
         {
-            var assembly = typeof(DependencyInjection).Assembly;
+            public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+            {
+                var appAssembly = typeof(DependencyInjection).Assembly;
+                var queryAssembly = typeof(GetTodayVoteTallyQuery).Assembly;
 
-            services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
-            services.AddAutoMapper(assembly);
-            services.AddValidatorsFromAssembly(assembly);
-            services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
+                // One AddMediatR call that registers both assemblies:
+                services.AddMediatR(cfg =>
+                {
+                    cfg.RegisterServicesFromAssembly(appAssembly);
+                    if (queryAssembly != appAssembly)
+                        cfg.RegisterServicesFromAssembly(queryAssembly);
+                });
 
-            return services;
+                services.AddAutoMapper(appAssembly);
+                services.AddValidatorsFromAssembly(appAssembly);
+                services.AddFluentValidationAutoValidation();
+                services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
+
+                return services;
+            }
         }
+
     }
-}

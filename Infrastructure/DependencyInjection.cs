@@ -16,6 +16,8 @@ namespace Infrastructure
 
             services.AddScoped<IAuthRepository, AuthRepository>();
 
+            services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+
             return services;
         }
     }

@@ -1,6 +1,7 @@
 using Application;
 using Infrastructure;
 
+
 namespace API
 {
     public class Program
@@ -25,7 +26,7 @@ namespace API
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
+                app.UseSwagger(); 
                 app.UseSwaggerUI();
             }
 
