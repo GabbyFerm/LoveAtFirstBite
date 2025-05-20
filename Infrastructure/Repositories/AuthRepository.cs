@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.Common;
 using Domain.Models;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -23,18 +24,28 @@ namespace Infrastructure.Repositories
         // Check if email is already registered
         public async Task<bool> EmailExistsAsync(string email)
         {
-            return await _context.Users.AnyAsync(user => user.UserEmail.ToLower() == email.ToLower());
+            return await _context.Users.AnyAsync(user => user.UserEmail!.ToLower() == email.ToLower());
         }
 
-        // Get a user by email (used in password reset)
-        public async Task<User?> GetUserByEmailAsync(string email)
-        {
-            return await _context.Users.FirstOrDefaultAsync(user => user.UserEmail.ToLower() == email.ToLower());
-        }
-
+        // Get user by username (used in login)
         public async Task<User?> GetUserByUsernameAsync(string username)
         {
-            return await _context.Users.FirstOrDefaultAsync(user => user.UserName.ToLower() == username.ToLower());
+            return await _context.Users.FirstOrDefaultAsync(user => user.UserName!.ToLower() == username.ToLower());
+        }
+
+        // Save changes to database
+        public async Task<OperationResult<bool>> SaveChangesAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+                return OperationResult<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                // Handle unexpected errors
+                return OperationResult<bool>.Failure($"Saving changes failed: {ex.Message}");
+            }
         }
     }
 }

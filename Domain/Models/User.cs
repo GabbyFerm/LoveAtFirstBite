@@ -5,7 +5,7 @@
         public int UserId { get; set; }
         public string? UserName { get; set; }
         public string? UserEmail { get; set; }
-        public required string Password { get; set; }
+        public string PasswordHash { get; set; } = null!;
 
         // Navigation
         public ICollection<Restaurant> Restaurants { get; set; } = new List<Restaurant>();
