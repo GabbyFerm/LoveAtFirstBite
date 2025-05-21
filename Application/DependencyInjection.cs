@@ -14,8 +14,8 @@ namespace Application
             services.AddMediatR(configuration => configuration.RegisterServicesFromAssembly(assembly));
             services.AddAutoMapper(assembly);
             services.AddValidatorsFromAssembly(assembly);
-            services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
+          //services.AddFluentValidationAutoValidation();
+          //services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
 
             return services;
         }

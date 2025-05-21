@@ -9,12 +9,12 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddControllers();
 
             // Add services from Application and Infrastructure
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
-            builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
