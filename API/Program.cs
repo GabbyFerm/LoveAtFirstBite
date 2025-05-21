@@ -10,6 +10,7 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddControllers();
 
             // Add services from Application and Infrastructure
             builder.Services.AddApplicationServices();
