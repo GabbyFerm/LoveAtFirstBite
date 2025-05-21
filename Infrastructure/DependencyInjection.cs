@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Helpers;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,7 @@ namespace Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IJwtGenerator, JWTGenerator>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 
