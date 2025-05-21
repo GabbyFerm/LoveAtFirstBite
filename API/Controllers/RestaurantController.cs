@@ -1,5 +1,7 @@
-﻿using Application.Restaurant.Commands;
-using Application.Restaurant.Queries;
+﻿using Application.Authorize.Commands.Register;
+using Application.Authorize.DTOs;
+using Application.Restaurants.Commands;
+using Application.Restaurants.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,9 +20,20 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
+        //public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
+        //{
+        //    var command = new RegisterCommand(userRegisterDto.UserName, userRegisterDto.UserEmail, userRegisterDto.Password);
+        //    var result = await _mediator.Send(command);
+
+        //    if (!result.IsSuccess)
+        //        return BadRequest(result);
+
+        //    return Ok(result);
+        //}
+
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantCommand command)
+        public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantCommand command) // change into DTOS here
         {
             var result = await _mediator.Send(command);
 

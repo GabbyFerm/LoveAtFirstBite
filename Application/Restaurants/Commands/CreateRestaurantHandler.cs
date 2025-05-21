@@ -4,7 +4,7 @@ using MediatR;
 using DomainRestaurant = Domain.Models.Restaurant; // should be solved differently
 
 
-namespace Application.Restaurant.Commands
+namespace Application.Restaurants.Commands
 {
     public class CreateRestaurantHandler : IRequestHandler<CreateRestaurantCommand, OperationResult<DomainRestaurant>>
     {

@@ -3,7 +3,7 @@ using Domain.Common;
 using MediatR;
 using DomainRestaurant = Domain.Models.Restaurant; // should be solved differently
 
-namespace Application.Restaurant.Queries
+namespace Application.Restaurants.Queries
 {
     public class GetAllRestaurantsHandler : IRequestHandler<GetAllRestaurantsQuery, OperationResult<IEnumerable<DomainRestaurant>>>
     {

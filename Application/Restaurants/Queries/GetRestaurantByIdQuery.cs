@@ -3,7 +3,7 @@ using MediatR;
 using DomainRestaurant = Domain.Models.Restaurant; // should be solved differently
 
 
-namespace Application.Restaurant.Queries
+namespace Application.Restaurants.Queries
 {
     public class GetRestaurantByIdQuery : IRequest<OperationResult<DomainRestaurant>>
     {

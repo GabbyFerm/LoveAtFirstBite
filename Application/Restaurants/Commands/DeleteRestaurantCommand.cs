@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Restaurant.Commands
+namespace Application.Restaurants.Commands
 {
     public class DeleteRestaurantCommand : IRequest<OperationResult<bool>>
     {

@@ -2,7 +2,7 @@
 using MediatR;
 using Domain.Models;
 
-namespace Application.Restaurant.Commands
+namespace Application.Restaurants.Commands
 {
     public class CreateRestaurantCommand : IRequest<OperationResult<Domain.Models.Restaurant>>
     {
