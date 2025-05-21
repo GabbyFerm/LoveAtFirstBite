@@ -14,6 +14,8 @@ namespace Application.Interfaces
         Task<OperationResult<T>> AddAsync(T entity);
         Task<OperationResult<T>> UpdateAsync(T entity);
         Task<OperationResult<bool>> DeleteByIdAsync(int id);
+
+        IQueryable<T> AsQueryable();
         //Task<OperationResult<bool>> SaveChangesAsync();
     }
 }

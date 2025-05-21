@@ -1,15 +1,16 @@
 ﻿using Application.Interfaces;
 using Domain.Common;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly DbContext _context;
+        private readonly LoveAtFirstBiteDbContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public GenericRepository(DbContext context)
+        public GenericRepository(LoveAtFirstBiteDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
@@ -114,6 +115,11 @@ namespace Infrastructure.Repositories
         private static string GetExceptionMessage(Exception ex)
         {
             return ex.InnerException?.Message ?? ex.Message;
+        }
+
+        public IQueryable<T> AsQueryable()
+        {
+            return _dbSet.AsQueryable();
         }
     }
 }

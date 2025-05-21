@@ -16,8 +16,8 @@ namespace Application
             services.AddAutoMapper(assembly);
 
             services.AddValidatorsFromAssembly(assembly);
-            services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
+          //services.AddFluentValidationAutoValidation();
+          //services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Behaviors.ValidationBehavior<,>));
 
