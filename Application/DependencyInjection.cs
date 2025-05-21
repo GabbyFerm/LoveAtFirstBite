@@ -1,4 +1,5 @@
-﻿using Application.Validators;
+﻿using Application.Interfaces;
+using Application.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;

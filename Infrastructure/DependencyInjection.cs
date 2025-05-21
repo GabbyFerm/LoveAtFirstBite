@@ -18,6 +18,9 @@ namespace Infrastructure
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IJwtGenerator, JWTGenerator>();
 
+            // Register the generic repository
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
             return services;
         }
     }
