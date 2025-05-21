@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Application.Votes.Commands.CreeateVote;
 using Application.Authorize.DTOs;
+using Application.Votes.Dtos;
 
 namespace API.Controllers
 {
@@ -19,14 +20,15 @@ namespace API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateVote([FromBody] CastVoteCommand command)
+        public async Task<IActionResult> CreateVote([FromBody] VoteDto voteDto)
         {
+            var command = new CastVoteCommand(voteDto.RestaurantId, voteDto.UserId);
             var result = await _mediator.Send(command);
 
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
 
-            return Ok(result.Data); 
+            return Ok(result); 
         }
 
     }

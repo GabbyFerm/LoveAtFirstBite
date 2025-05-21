@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Application.Commen.Dtos;
+using Application.Votes.Dtos;
 
 namespace Application.Votes.Commands.CreeateVote
 {
@@ -37,7 +37,7 @@ namespace Application.Votes.Commands.CreeateVote
                 // Check if user already voted today
                 var existingVote = await _voteRepository
                     .AsQueryable()
-                    .FirstOrDefaultAsync(v => v.UserId == request.GetHashCode() && v.VoteDate == today, cancellationToken);
+                    .FirstOrDefaultAsync(v => v.UserId == request.UserId && v.VoteDate == today, cancellationToken);
 
                 if (existingVote != null)
                 {
@@ -45,20 +45,20 @@ namespace Application.Votes.Commands.CreeateVote
                 }
 
                 // Validate User
-                var userResult = await _userRepository.GetByIdAsync(request.GetHashCode());
+                var userResult = await _userRepository.GetByIdAsync(request.UserId);
                 if (!userResult.IsSuccess)
                     return OperationResult<VoteDto>.Failure("User not found.");
 
                 // Validate Restaurant
-                var restaurantResult = await _restaurantRepository.GetByIdAsync(request.GetHashCode());
+                var restaurantResult = await _restaurantRepository.GetByIdAsync(request.UserId);
                 if (!restaurantResult.IsSuccess)
                     return OperationResult<VoteDto>.Failure("Restaurant not found.");
 
                 // Create Vote
                 var vote = new Vote
                 {
-                    UserId = request.GetHashCode(),
-                    RestaurantId = request.GetHashCode(),
+                    UserId = request.UserId,
+                    RestaurantId = request.RestaurantId,
                     VoteDate = today
                 };
 
