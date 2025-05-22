@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Application.Votes.Commands.CreeateVote;
-using Application.Authorize.DTOs;
 using Application.Votes.Dtos;
+using Application.Votes.Queries;      
 
 namespace API.Controllers
 {
@@ -12,12 +12,7 @@ namespace API.Controllers
     {
         private readonly IMediator _mediator;
         public VoteController(IMediator mediator)
-        {
-
-            _mediator = mediator;
-
-        }
-
+            => _mediator = mediator;
 
         [HttpPost]
         public async Task<IActionResult> CreateVote([FromBody] VoteDto voteDto)
@@ -28,8 +23,14 @@ namespace API.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
 
-            return Ok(result); 
+            return Ok(result);
         }
 
+        [HttpGet("today")]
+        public async Task<ActionResult<List<TodayVoteTallyDto>>> GetTodayTally()
+        {
+            var list = await _mediator.Send(new GetTodayVoteTallyQuery());
+            return Ok(list);
+        }
     }
 }
