@@ -14,7 +14,6 @@ namespace Application
             services.AddAutoMapper(assembly);
 
             services.AddValidatorsFromAssembly(assembly);
-
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Behaviors.ValidationBehavior<,>));
 
             return services;
