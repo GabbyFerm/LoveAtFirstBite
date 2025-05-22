@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Application.Interfaces;
-using Infrastructure.Data;    
+using Infrastructure.Data;
 
 namespace Infrastructure.Repositories
 {

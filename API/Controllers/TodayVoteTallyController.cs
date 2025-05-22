@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Application.Votes.Dtos;
 using Application.Votes.Queries;
+using Domain.Common;
 
 namespace API.Controllers
 {
@@ -17,10 +18,18 @@ namespace API.Controllers
             => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<List<TodayVoteTallyDto>>> Get()
+        public async Task<IActionResult> Get()
         {
-            var result = await _mediator.Send(new GetTodayVoteTallyQuery());
-            return Ok(result);
+            OperationResult<List<TodayVoteTallyDto>> result =
+                await _mediator.Send(new GetTodayVoteTallyQuery());
+
+            if (!result.IsSuccess)
+            {
+                var errors = result.Errors ?? new[] { result.ErrorMessage! };
+                return BadRequest(errors);
+            }
+
+            return Ok(result.Data);
         }
     }
 }

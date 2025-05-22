@@ -5,9 +5,6 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    /// <summary>
-    /// Simple DTO for repository projections.
-    /// </summary>
     public class RestaurantVoteCount
     {
         public int RestaurantId { get; set; }
@@ -17,10 +14,6 @@ namespace Application.Interfaces
 
     public interface IRestaurantRepository
     {
-        /// <summary>
-        /// Returns, for each restaurant, how many votes it received within [startUtc, endUtc).
-        /// Includes restaurants with zero votes.
-        /// </summary>
         Task<List<RestaurantVoteCount>> GetDailyVoteTallyAsync(
             DateTime startUtc,
             DateTime endUtc,
