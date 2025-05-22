@@ -16,12 +16,12 @@ namespace Infrastructure.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<OperationResult<T>> AddAsync(T entity)
+        public async Task<OperationResult<T>> AddAsync(T entity, CancellationToken cancellationToken)
         {
             try
             {
                 await _dbSet.AddAsync(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
                 return OperationResult<T>.Success(entity);
             }
             catch (Exception ex)
@@ -94,13 +94,13 @@ namespace Infrastructure.Repositories
 
         }
 
-        public async Task<OperationResult<T>> UpdateAsync(T entity)
+        public async Task<OperationResult<T>> UpdateAsync(T entity, CancellationToken cancellationToken)
         {
 
             try
             {
                 _dbSet.Update(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
                 return OperationResult<T>.Success(entity);
             }
             catch (Exception ex)
