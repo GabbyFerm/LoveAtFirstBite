@@ -27,11 +27,9 @@ namespace Infrastructure.Repositories
             catch (Exception ex)
             {
                 // This captures the deeper cause
-
                 return OperationResult<T>.Failure(GetExceptionMessage(ex));
             }
         }
-
 
         public async Task<OperationResult<bool>> DeleteByIdAsync(int id)
         {
@@ -51,52 +49,53 @@ namespace Infrastructure.Repositories
             {
                 return OperationResult<bool>.Failure(GetExceptionMessage(ex));
             }
+        }
 
-
+        public async Task<OperationResult<bool>> DeleteAllAsync()
+        {
+            try
+            {
+                _dbSet.RemoveRange(_dbSet);
+                await _context.SaveChangesAsync();
+                return OperationResult<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<bool>.Failure(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         public async Task<OperationResult<IEnumerable<T>>> GetAllAsync()
         {
             try
             {
-
                 var list = await _dbSet.ToListAsync();
                 return OperationResult<IEnumerable<T>>.Success(list);
-
             }
             catch (Exception ex)
 
             {
-
                 return OperationResult<IEnumerable<T>>.Failure(GetExceptionMessage(ex));
-
-
             }
-
         }
-
 
         public async Task<OperationResult<T>> GetByIdAsync(int id)
         {
             try
             {
-
                 var entity = await _dbSet.FindAsync(id);
                 return entity != null
                     ? OperationResult<T>.Success(entity)
                     : OperationResult<T>.Failure("Entity not found");
-
             }
             catch (Exception ex)
             {
                 return OperationResult<T>.Failure(GetExceptionMessage(ex));
             }
-
         }
 
         public async Task<OperationResult<T>> UpdateAsync(T entity, CancellationToken cancellationToken)
         {
-
             try
             {
                 _dbSet.Update(entity);
@@ -105,18 +104,13 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-
                 return OperationResult<T>.Failure(GetExceptionMessage(ex));
-
             }
-
         }
-
         private static string GetExceptionMessage(Exception ex)
         {
             return ex.InnerException?.Message ?? ex.Message;
         }
-
         public IQueryable<T> AsQueryable()
         {
             return _dbSet.AsQueryable();
