@@ -22,7 +22,7 @@ namespace Infrastructure.Extensions
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Enter: Bearer {your JWT token}"
+                    Description = "Enter your token (without Bearer)"
                 });
 
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement
