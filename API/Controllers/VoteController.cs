@@ -4,6 +4,7 @@ using Application.Votes.Commands.CreeateVote;
 using Application.Authorize.DTOs;
 using Application.Votes.Dtos;
 using Domain.Common;
+using Application.Votes.Queries;
 
 namespace API.Controllers
 {
@@ -32,6 +33,20 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("today")]
+        public async Task<IActionResult> GetTodayTally()
+        {
+            OperationResult<List<TodayVoteTallyDto>> result
+                = await _mediator.Send(new GetTodayVoteTallyQuery());
 
+            if (!result.IsSuccess)
+            {
+                var errors = result.Errors ?? new[] { result.ErrorMessage! };
+                return BadRequest(errors);
+            }
+
+            return Ok(result.Data);
+
+        }
     }
 }

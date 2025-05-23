@@ -38,6 +38,11 @@ namespace Infrastructure.Data
             modelBuilder.Entity<Vote>()
                 .HasIndex(v => new { v.UserId, v.VoteDate })
                 .IsUnique(); // Ensure one vote per user per day
+
+            modelBuilder.Entity<Vote>()
+                .Property(v => v.Round)
+                .HasDefaultValue(1)       // SQL default = 1
+                .ValueGeneratedOnAdd();
         }
     }
 }

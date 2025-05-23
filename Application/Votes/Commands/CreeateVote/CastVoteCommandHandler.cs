@@ -1,17 +1,19 @@
-﻿using Application.Interfaces;
-using Domain.Common;
-using MediatR;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
+using MediatR;
+using Domain.Common;
 using Domain.Models;
-using Microsoft.EntityFrameworkCore;
+using Application.Interfaces;
+using Application.Votes.Commands.CreeateVote;
 using Application.Votes.Dtos;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Votes.Commands.CreeateVote
 {
-    public class CastVoteCommandHandler : IRequestHandler<CastVoteCommand, OperationResult<VoteDto>>
+    public class CastVoteCommandHandler
+        : IRequestHandler<CastVoteCommand, OperationResult<VoteDto>>
     {
         private readonly IGenericRepository<Vote> _voteRepository;
         private readonly IGenericRepository<User> _userRepository;
@@ -30,51 +32,68 @@ namespace Application.Votes.Commands.CreeateVote
             _mapper = mapper;
         }
 
-        public async Task<OperationResult<VoteDto>> Handle(CastVoteCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<VoteDto>> Handle(
+            CastVoteCommand request,
+            CancellationToken cancellationToken)
         {
             var today = DateTime.UtcNow.Date;
 
-            // Validate User
+            // 1) Validate User
             var userResult = await _userRepository.GetByIdAsync(request.UserId);
             if (!userResult.IsSuccess)
                 return OperationResult<VoteDto>.Failure("User not found.");
 
-            // Validate Restaurant
+            // 2) Validate Restaurant
             var restaurantResult = await _restaurantRepository.GetByIdAsync(request.RestaurantId);
             if (!restaurantResult.IsSuccess)
                 return OperationResult<VoteDto>.Failure("Restaurant not found.");
 
-            // Check if user has already voted today
+            // 3) Check existing vote this date
             var existingVote = await _voteRepository
                 .AsQueryable()
-                .FirstOrDefaultAsync(v => v.UserId == request.UserId && v.VoteDate == today, cancellationToken);
+                .FirstOrDefaultAsync(
+                    v => v.UserId == request.UserId
+                      && v.VoteDate.Date == today,
+                    cancellationToken);
 
             if (existingVote != null)
             {
                 if (existingVote.RestaurantId == request.RestaurantId)
                 {
-                    return OperationResult<VoteDto>.Failure("You’ve already voted for this restaurant today.");
+                    return OperationResult<VoteDto>.Failure(
+                        "You’ve already voted for this restaurant today.");
                 }
 
-                // Change vote to a different restaurant
+                // Change vote target; leave Round at its existing value (1)
                 existingVote.RestaurantId = request.RestaurantId;
-                await _voteRepository.UpdateAsync(existingVote, cancellationToken);
+                var updateResult = await _voteRepository.UpdateAsync(existingVote, cancellationToken);
 
-                var updatedVoteDto = _mapper.Map<VoteDto>(existingVote);
-                return OperationResult<VoteDto>.Success(updatedVoteDto);
+                if (!updateResult.IsSuccess)
+                    return OperationResult<VoteDto>.Failure("Failed to update vote.");
+
+                var updatedDto = _mapper.Map<VoteDto>(existingVote);
+                return OperationResult<VoteDto>.Success(updatedDto);
             }
 
-            // Create a new vote
+            // 4) Create a brand‐new vote
             var newVote = new Vote
             {
                 UserId = request.UserId,
                 RestaurantId = request.RestaurantId,
-                VoteDate = today
+                VoteDate = today,
+                // Round is omitted here—CLR default = 1, and DB default enforces 1
             };
 
-            var createdVote = await _voteRepository.AddAsync(newVote, cancellationToken);
-            var voteDto = _mapper.Map<VoteDto>(createdVote.Data);
+            // Persist
+            var createResult = await _voteRepository.AddAsync(newVote, cancellationToken);
+            if (!createResult.IsSuccess)
+                return OperationResult<VoteDto>.Failure("Failed to create vote.");
 
+            // Grab the saved entity
+            var savedVote = createResult.Data!;
+
+            // 5) Map to DTO (includes Round)
+            var voteDto = _mapper.Map<VoteDto>(savedVote);
             return OperationResult<VoteDto>.Success(voteDto);
         }
     }
