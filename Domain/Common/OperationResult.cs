@@ -12,7 +12,7 @@
 
         // For single, general errors
         public static OperationResult<T> Failure(string errorMessage) =>
-            new() { IsSuccess = false, ErrorMessage = errorMessage };
+            new() { IsSuccess = false, ErrorMessage = errorMessage ,  Errors = new List<string> { errorMessage } };
 
         // For multiple validation errors from FluentValidation
         public static OperationResult<T> Failure(string[] errors) =>

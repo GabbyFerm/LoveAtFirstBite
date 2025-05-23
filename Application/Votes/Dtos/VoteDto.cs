@@ -8,9 +8,10 @@ namespace Application.Votes.Dtos
 {
     public class VoteDto
     {
-
         public int RestaurantId { get; set; }
         public int UserId { get; set; }
+        public DateTime VoteDate { get; set; } // Optional but helpful for returning data
+
 
     }
 }

@@ -34,6 +34,10 @@ namespace Infrastructure.Data
                 .WithMany(r => r.Votes)
                 .HasForeignKey(v => v.RestaurantId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Vote>()
+                .HasIndex(v => new { v.UserId, v.VoteDate })
+                .IsUnique(); // Ensure one vote per user per day
         }
     }
 }
