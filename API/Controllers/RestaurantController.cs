@@ -1,11 +1,8 @@
-﻿using Application.Authorize.Commands.Register;
-using Application.Authorize.DTOs;
-using Application.Restaurants.Commands;
-using Application.Restaurants.DTOs;
+﻿using Application.Restaurants.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -24,11 +21,16 @@ namespace API.Controllers
         [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateRestaurantCommand command)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
+            command.CreatedByUserId = int.Parse(userIdClaim);
+
             var result = await _mediator.Send(command);
 
             if (!result.IsSuccess)
                 return BadRequest(result.ErrorMessage);
-
             return Ok(result.Data);
         }
 
