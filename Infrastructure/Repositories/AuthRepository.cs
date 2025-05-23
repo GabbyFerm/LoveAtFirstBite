@@ -4,7 +4,7 @@ using Domain.Models;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Repositories
+namespace Infrastructure.Repositories 
 {
     public class AuthRepository : IAuthRepository
     {
