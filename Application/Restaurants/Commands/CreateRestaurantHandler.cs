@@ -5,7 +5,6 @@ using Domain.Common;
 using Domain.Models;
 using MediatR;
 
-
 namespace Application.Restaurants.Commands
 {
     public class CreateRestaurantHandler : IRequestHandler<CreateRestaurantCommand, OperationResult<RestaurantDto>>
