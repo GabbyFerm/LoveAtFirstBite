@@ -3,6 +3,7 @@ using Domain.Common;
 using Domain.Models;
 using BCrypt.Net;
 using MediatR;
+using AutoMapper;
 
 namespace Application.Authorize.Commands.Register
 {
@@ -10,11 +11,13 @@ namespace Application.Authorize.Commands.Register
     {
         private readonly IAuthRepository _authRepository;
         private readonly IJwtGenerator _jwtGenerator;
+        private readonly IMapper _mapper;
 
-        public RegisterCommandHandler(IAuthRepository authRepository, IJwtGenerator jwtGenerator)
+        public RegisterCommandHandler(IAuthRepository authRepository, IJwtGenerator jwtGenerator, IMapper mapper)
         {
             _authRepository = authRepository;
             _jwtGenerator = jwtGenerator;
+            _mapper = mapper;
         }
 
         public async Task<OperationResult<string>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -29,16 +32,12 @@ namespace Application.Authorize.Commands.Register
                 if (emailExists)
                     return OperationResult<string>.Failure("Email is already registered.");
 
-                // Hash the user's password before storing it
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                // Map the DTO to a User entity
+                var user = _mapper.Map<User>(request);
 
-                // Create a new user entity
-                var user = new User
-                {
-                    UserName = request.UserName,
-                    UserEmail = normalizedEmail,
-                    PasswordHash = hashedPassword
-                };
+                // Hash the password manually
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                user.UserEmail = user.UserEmail.ToLower();
 
                 // Add the user to the context (not saved yet)
                 await _authRepository.CreateUserAsync(user);

@@ -18,6 +18,8 @@ namespace Infrastructure
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IJwtGenerator, JWTGenerator>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<Application.Interfaces.IRestaurantRepository,
+                          Infrastructure.Repositories.RestaurantRepository>();
 
             return services;
         }

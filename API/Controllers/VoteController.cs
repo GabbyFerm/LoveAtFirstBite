@@ -28,7 +28,7 @@ namespace API.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
 
-            return Ok(result); 
+            return Ok(result);
         }
 
     }
