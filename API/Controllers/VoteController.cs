@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Application.Votes.Commands.CreeateVote;
 using Application.Authorize.DTOs;
 using Application.Votes.Dtos;
+using Domain.Common;
 
 namespace API.Controllers
 {
@@ -30,6 +31,7 @@ namespace API.Controllers
 
             return Ok(result);
         }
+
 
     }
 }

@@ -12,6 +12,7 @@ namespace API
 
             builder.Services.AddControllers();
 
+
             // Add services from Application and Infrastructure
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrastructureServices(builder.Configuration);
