@@ -1,7 +1,6 @@
-﻿using DomainRestaurant = Domain.Models.Restaurant; // should be solved differently
+﻿using Domain.Models;
 using Application.Restaurants.DTOs;
 using AutoMapper;
-using Domain.Models;
 
 namespace Application.Common.Mappings
 {
@@ -9,8 +8,8 @@ namespace Application.Common.Mappings
     {
         public RestaurantProfile()
         {
-            CreateMap<DomainRestaurant, RestaurantDto>();
-            CreateMap<RestaurantDto, DomainRestaurant>();
+            CreateMap<RestaurantDto, Restaurant>();
+            CreateMap<Restaurant, RestaurantDto>();
         }
     }
 }

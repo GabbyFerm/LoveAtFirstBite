@@ -1,7 +1,7 @@
 ﻿using Application.Authorize.Commands.Register;
 using Application.Authorize.DTOs;
 using Application.Restaurants.Commands;
-using Application.Restaurants.Queries;
+using Application.Restaurants.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,73 +20,17 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        //public async Task<IActionResult> Register([FromBody] UserRegisterDto userRegisterDto)
-        //{
-        //    var command = new RegisterCommand(userRegisterDto.UserName, userRegisterDto.UserEmail, userRegisterDto.Password);
-        //    var result = await _mediator.Send(command);
-
-        //    if (!result.IsSuccess)
-        //        return BadRequest(result);
-
-        //    return Ok(result);
-        //}
-
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateRestaurant([FromBody] CreateRestaurantCommand command) // change into DTOS here
+        public async Task<IActionResult> Create([FromBody] CreateRestaurantCommand command)
         {
             var result = await _mediator.Send(command);
 
             if (!result.IsSuccess)
-                return BadRequest(result);
+                return BadRequest(result.ErrorMessage);
 
-            return Ok(result);
+            return Ok(result.Data);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _mediator.Send(new GetAllRestaurantsQuery());
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var result = await _mediator.Send(new GetRestaurantByIdQuery(id));
-
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
-        }
-
-        [HttpPut("{id}")]
-        [Authorize]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateRestaurantCommand command)
-        {
-            if (id != command.Id) return BadRequest("Mismatched IDs.");
-            var result = await _mediator.Send(command);
-
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var result = await _mediator.Send(new DeleteRestaurantCommand(id));
-
-            if (!result.IsSuccess)
-                return BadRequest(result);
-
-            return Ok(result);
-        }
     }
 }

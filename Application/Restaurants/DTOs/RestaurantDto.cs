@@ -8,7 +8,9 @@ namespace Application.Restaurants.DTOs
 {
     public class RestaurantDto
     {
-        public required string RestaurantName { get; set; }
-        public required string Address { get; set; }
+        public int RestaurantId { get; set; }
+        public string RestaurantName { get; set; } = null!;
+        public string Address { get; set; } = null!;
+        public int CreatedByUserId { get; set; }
     }
 }
