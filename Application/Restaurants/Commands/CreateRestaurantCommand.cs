@@ -1,10 +1,10 @@
 ﻿using Domain.Common;
 using MediatR;
-using Domain.Models;
+using Application.Restaurants.DTOs;
 
 namespace Application.Restaurants.Commands
 {
-    public class CreateRestaurantCommand : IRequest<OperationResult<Domain.Models.Restaurant>>
+    public class CreateRestaurantCommand : IRequest<OperationResult<RestaurantDto>>
     {
 
         public string? RestaurantName { get; set; }
