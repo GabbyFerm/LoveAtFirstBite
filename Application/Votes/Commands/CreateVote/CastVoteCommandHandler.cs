@@ -1,13 +1,10 @@
 ﻿using Application.Interfaces;
-using Domain.Common;
-using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
 using Application.Votes.Dtos;
+using AutoMapper;
+using Domain.Common;
+using Domain.Models;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Votes.Commands.CreeateVote
 {
@@ -51,17 +48,7 @@ namespace Application.Votes.Commands.CreeateVote
 
             if (existingVote != null)
             {
-                if (existingVote.RestaurantId == request.RestaurantId)
-                {
-                    return OperationResult<VoteDto>.Failure("You’ve already voted for this restaurant today.");
-                }
-
-                // Change vote to a different restaurant
-                existingVote.RestaurantId = request.RestaurantId;
-                await _voteRepository.UpdateAsync(existingVote, cancellationToken);
-
-                var updatedVoteDto = _mapper.Map<VoteDto>(existingVote);
-                return OperationResult<VoteDto>.Success(updatedVoteDto);
+              return OperationResult<VoteDto>.Failure("You’ve already voted for this restaurant today you can change your vote by clicking on ChangeVote button.");
             }
 
             // Create a new vote
