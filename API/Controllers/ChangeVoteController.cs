@@ -42,9 +42,11 @@ namespace API.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
 
+
+
             return Ok(new
             {
-                message = result.Message ?? "Vote updated successfully.",
+
                 vote = result.Data
             });
         }

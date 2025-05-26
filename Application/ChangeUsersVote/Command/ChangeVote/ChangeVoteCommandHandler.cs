@@ -58,7 +58,6 @@ namespace Application.Votes.Commands.ChangeVote
             {
                 Data = updatedVoteDto,
                 IsSuccess = true,
-                Message = "Vote successfully changed."
             };
         }
     }
