@@ -185,3 +185,11 @@ All users share the same pool of restaurants, and the app resets votes automatic
 1. Admin opens system settings  
 2. Selects new reset time  
 3. System updates scheduled task
+
+---
+## 👥 Contributors
+
+- [@GabbyFerm](https://github.com/GabbyFerm) – Backend development, frontend layout, mockups
+- [@Mohanad Al-Daghestani](https://github.com/mohald-3) – Backend development
+- [@Tomas Steifo](https://github.com/TomasSteifo) – Backend development
+- [@Hanan Ahmed](https://github.com/ITHanan) – Backend development
