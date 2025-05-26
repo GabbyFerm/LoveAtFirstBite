@@ -1,9 +1,7 @@
 ﻿using Application.Votes.Commands.ChangeVote;
 using Application.Votes.Dtos;
-using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -18,7 +16,7 @@ namespace API.Controllers
         private readonly IMediator _mediator;
         public ChangeVoteController(IMediator mediator)
         {
-            _mediator = mediator; 
+            _mediator = mediator;
         }
 
 
@@ -46,7 +44,6 @@ namespace API.Controllers
 
             return Ok(new
             {
-
                 vote = result.Data
             });
         }
