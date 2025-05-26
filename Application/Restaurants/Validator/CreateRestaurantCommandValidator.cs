@@ -1,10 +1,5 @@
 ﻿using Application.Restaurants.Commands;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Restaurants.Validator
 {
@@ -19,9 +14,6 @@ namespace Application.Restaurants.Validator
             RuleFor(x => x.Address)
                 .NotEmpty().WithMessage("Address is required.")
                 .MaximumLength(200).WithMessage("Address cannot exceed 200 characters.");
-
-            RuleFor(x => x.CreatedByUserId)
-                .GreaterThan(0).WithMessage("Invalid user ID.");
         }
     }
 }
