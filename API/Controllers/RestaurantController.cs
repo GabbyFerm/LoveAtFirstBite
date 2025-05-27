@@ -1,4 +1,5 @@
 ﻿using Application.Restaurants.Commands;
+using Application.Restaurants.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,18 @@ namespace API.Controllers
 
             if (!result.IsSuccess)
                 return BadRequest(result.ErrorMessage);
+            return Ok(result.Data);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _mediator.Send(new GetAllRestaurantsQuery());
+
+            if (!result.IsSuccess)
+                return BadRequest(result.ErrorMessage);
+
             return Ok(result.Data);
         }
 
