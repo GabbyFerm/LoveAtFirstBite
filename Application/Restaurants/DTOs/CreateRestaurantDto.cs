@@ -1,9 +1,7 @@
-﻿
-namespace Application.Restaurants.DTOs
+﻿namespace Application.Restaurants.DTOs
 {
-    public class RestaurantDto
+    public class CreateRestaurantDto
     {
-        public int RestaurantId { get; set; }
         public string RestaurantName { get; set; } = null!;
         public string Address { get; set; } = null!;
     }

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Application.Restaurants.Commands
 {
-    public class CreateRestaurantCommand : IRequest<OperationResult<RestaurantDto>>
+    public class CreateRestaurantCommand : IRequest<OperationResult<CreateRestaurantDto>>
     {
 
         public string? RestaurantName { get; set; }
