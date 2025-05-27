@@ -1,6 +1,7 @@
 ﻿using Domain.Common;
 using MediatR;
 using Application.Restaurants.DTOs;
+using System.Text.Json.Serialization;
 
 namespace Application.Restaurants.Commands
 {
@@ -9,13 +10,7 @@ namespace Application.Restaurants.Commands
 
         public string? RestaurantName { get; set; }
         public string? Address { get; set; }
+        [JsonIgnore]
         public int CreatedByUserId { get; set; }
-
-        public CreateRestaurantCommand(string restaurantName, string address, int createdByUserId)
-        {
-            RestaurantName = restaurantName;
-            Address = address;
-            CreatedByUserId = createdByUserId;
-        }
     }
 }

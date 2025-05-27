@@ -6,6 +6,8 @@ using Application.Votes.Commands.CreeateVote;
 using Application.Votes.Dtos;
 using Application.Votes.Queries;
 using Domain.Common;
+using Application.Votes.Commands.ResetVotes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -32,6 +34,7 @@ namespace API.Controllers
             return Ok(result.Data);
         }
 
+
         [HttpGet("today")]
         public async Task<IActionResult> GetTodayTally()
         {
@@ -42,6 +45,18 @@ namespace API.Controllers
                 return BadRequest(errors);
             }
             return Ok(result.Data);
+         }
+            
+        [HttpDelete("reset")]
+        [Authorize]
+        public async Task<IActionResult> ResetVotes()
+        {
+            var result = await _mediator.Send(new ResetVotesCommand());
+
+            if (!result.IsSuccess)
+                return BadRequest(result.ErrorMessage);
+
+            return Ok(new { message = "Votes reset", deleted = result.Data });
         }
 
         [HttpGet("today/{round}")]
