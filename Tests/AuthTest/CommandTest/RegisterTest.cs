@@ -33,6 +33,8 @@ namespace Tests.AuthTest.CommandTest
         [Test]
         public async Task Handle_EmailAlreadyExists_ReturnsFailure()
         {
+            // This test checks that the handler returns an error if the email is already taken
+
             // Arrange
             var command = new RegisterCommand("TestUser", "test@example.com", "Password123");
 
@@ -51,6 +53,8 @@ namespace Tests.AuthTest.CommandTest
         [Test]
         public async Task Handle_ValidRegistration_ReturnsToken()
         {
+            // This test simulates a successful registration and checks that a token is returned
+
             // Arrange
             var command = new RegisterCommand("TestUser", "test@example.com", "Password123");
             var user = new User { UserEmail = command.UserEmail, UserName = command.UserName };

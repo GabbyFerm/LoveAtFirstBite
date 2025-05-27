@@ -29,6 +29,8 @@ namespace Tests.AuthTest.QueryTest
         [Test]
         public async Task Handle_InvalidCredentials_ReturnsFailure()
         {
+            // This test simulates trying to log in with a username that doesn't exist
+
             // Arrange
             var command = new LoginQuery("FakeUser", "WrongPassword");
 
@@ -47,6 +49,8 @@ namespace Tests.AuthTest.QueryTest
         [Test]
         public async Task Handle_ValidCredentials_ReturnsToken() 
         {
+            // This test simulates a successful login attempt
+
             // Arrange
             var command = new LoginQuery("TestUser", "CorrectPassword");
 
@@ -73,6 +77,8 @@ namespace Tests.AuthTest.QueryTest
         [Test]
         public async Task Handle_ThrowsException_ReturnsFailure()
         {
+            // This test checks that unexpected errors are handled gracefully
+
             // Arrange
             var command = new LoginQuery("TestUser", "Password123");
 
