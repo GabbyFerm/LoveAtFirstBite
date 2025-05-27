@@ -14,7 +14,6 @@ namespace Application.Commen.Mappings
         public VotingProfile() 
         {
          CreateMap<Vote, VoteDto>().ReverseMap();
-        
         }
     }
 }
