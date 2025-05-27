@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories
         public async Task<List<RestaurantVoteCount>> GetDailyVoteTallyAsync(
             DateTime startUtc,
             DateTime endUtc,
+            int round,
             CancellationToken cancellationToken = default)
         {
             return await _db.Restaurants
@@ -28,7 +29,8 @@ namespace Infrastructure.Repositories
                     RestaurantName = r.RestaurantName,
                     VoteCount = r.Votes.Count(v =>
                         v.VoteDate >= startUtc &&
-                        v.VoteDate < endUtc)
+                        v.VoteDate < endUtc &&
+                        v.Round == round)
                 })
                 .ToListAsync(cancellationToken);
         }

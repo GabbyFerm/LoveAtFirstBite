@@ -25,20 +25,19 @@ namespace Application.Votes.Handlers
         {
             try
             {
-                // Compute “today” in CEST
+                // Compute CET “today”
                 var cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
                 var cetNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, cetZone);
                 var today = cetNow.Date;
                 var startUtc = TimeZoneInfo.ConvertTimeToUtc(today, cetZone);
                 var endUtc = TimeZoneInfo.ConvertTimeToUtc(today.AddDays(1), cetZone);
 
-                // Fetch vote counts
+                // Fetch counts at the requested round
                 var rawCounts = await _restaurantRepo
-                    .GetDailyVoteTallyAsync(startUtc, endUtc, cancellationToken);
+                    .GetDailyVoteTallyAsync(startUtc, endUtc, request.Round, cancellationToken);
 
                 if (rawCounts == null || !rawCounts.Any())
-                    return OperationResult<List<TodayVoteTallyDto>>
-                        .Failure("No votes today");
+                    return OperationResult<List<TodayVoteTallyDto>>.Failure("No votes today");
 
                 var maxVotes = rawCounts.Max(x => x.VoteCount);
 
