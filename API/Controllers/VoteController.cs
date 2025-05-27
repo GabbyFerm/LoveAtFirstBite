@@ -4,8 +4,9 @@ using Application.Votes.Commands.CreeateVote;
 using Application.Authorize.DTOs;
 using Application.Votes.Dtos;
 using Domain.Common;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Application.Votes.Commands.ResetVotes;
+using Microsoft.AspNetCore.Authorization;
 using Application.Votes.Commands.ChangeVote;
 
 namespace API.Controllers
@@ -75,5 +76,18 @@ namespace API.Controllers
                 vote = result.Data
             });
         }
+
+        [HttpDelete("reset")]
+        [Authorize]
+        public async Task<IActionResult> ResetVotes()
+        {
+            var result = await _mediator.Send(new ResetVotesCommand());
+
+            if (!result.IsSuccess)
+                return BadRequest(result.ErrorMessage);
+
+            return Ok(new { message = "Votes reset", deleted = result.Data });
+        }
+
     }
 }
