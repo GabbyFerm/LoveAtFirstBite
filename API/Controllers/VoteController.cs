@@ -6,6 +6,7 @@ using Application.Votes.Dtos;
 using Domain.Common;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Application.Votes.Commands.ChangeVote;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
         {
             _mediator = mediator;
         }
+
 
         [HttpPost]
         [Authorize]
@@ -39,6 +41,39 @@ namespace API.Controllers
                 return BadRequest(result.Errors);
 
             return Ok(result);
+        }
+
+
+
+
+
+
+        [HttpPut("Change")]
+        [Authorize]
+        public async Task<IActionResult> ChangeVote([FromBody] VoteDto voteDto)
+        {
+            // Validate restaurantId
+            if (voteDto.RestaurantId <= 0)
+                return BadRequest("Invalid restaurant ID.");
+
+            // Extract user ID from JWT
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+                return Unauthorized("User ID not found or invalid in token.");
+
+            // Create and send command
+            var command = new ChangeVoteCommand(voteDto.RestaurantId, userId);
+            var result = await _mediator.Send(command);
+
+            if (!result.IsSuccess)
+                return BadRequest(result.Errors);
+
+
+
+            return Ok(new
+            {
+                vote = result.Data
+            });
         }
     }
 }
