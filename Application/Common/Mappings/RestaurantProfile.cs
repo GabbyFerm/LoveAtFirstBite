@@ -10,6 +10,8 @@ namespace Application.Common.Mappings
         {
             CreateMap<RestaurantDto, Restaurant>();
             CreateMap<Restaurant, RestaurantDto>();
+            CreateMap<CreateRestaurantDto, Restaurant>();
+            CreateMap<Restaurant, CreateRestaurantDto>();
         }
     }
 }

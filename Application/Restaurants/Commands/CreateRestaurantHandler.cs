@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Application.Restaurants.Commands
 {
-    public class CreateRestaurantHandler : IRequestHandler<CreateRestaurantCommand, OperationResult<RestaurantDto>>
+    public class CreateRestaurantHandler : IRequestHandler<CreateRestaurantCommand, OperationResult<CreateRestaurantDto>>
     {
         private readonly IGenericRepository<Restaurant> _repository;
         private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ namespace Application.Restaurants.Commands
             _mapper = mapper;
         }
 
-        public async Task<OperationResult<RestaurantDto>> Handle(CreateRestaurantCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<CreateRestaurantDto>> Handle(CreateRestaurantCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -32,14 +32,14 @@ namespace Application.Restaurants.Commands
                 var result = await _repository.AddAsync(restaurant);
 
                 if (!result.IsSuccess)
-                    return OperationResult<RestaurantDto>.Failure(result.ErrorMessage!);
+                    return OperationResult<CreateRestaurantDto>.Failure(result.ErrorMessage!);
 
-                var dto = _mapper.Map<RestaurantDto>(result.Data);
-                return OperationResult<RestaurantDto>.Success(dto);
+                var dto = _mapper.Map<CreateRestaurantDto>(result.Data);
+                return OperationResult<CreateRestaurantDto>.Success(dto);
             }
             catch (Exception ex)
             {
-                return OperationResult<RestaurantDto>.Failure($"Unexpected error: {ex.Message}");
+                return OperationResult<CreateRestaurantDto>.Failure($"Unexpected error: {ex.Message}");
             }
         }
     }
