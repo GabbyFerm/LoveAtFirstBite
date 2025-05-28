@@ -10,5 +10,7 @@
         // Navigation
         public User User { get; set; } = null!;
         public Restaurant Restaurant { get; set; } = null!;
+        public int Round { get; set; } = 1;    // new!
+
     }
 }

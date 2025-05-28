@@ -17,6 +17,7 @@ namespace Application.Interfaces
         Task<List<RestaurantVoteCount>> GetDailyVoteTallyAsync(
             DateTime startUtc,
             DateTime endUtc,
+            int round,
             CancellationToken cancellationToken = default
         );
     }
