@@ -24,12 +24,24 @@ namespace API
 
             builder.Services.AddSwaggerWithJwt();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("FrontendPolicy", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             app.UseSwagger();
             app.UseSwaggerUI();
+
+            app.UseCors("FrontendPolicy");
 
             app.UseHttpsRedirection();
             app.UseAuthentication(); // must come before UseAuthorization

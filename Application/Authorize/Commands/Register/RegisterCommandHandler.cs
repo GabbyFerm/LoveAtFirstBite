@@ -37,7 +37,7 @@ namespace Application.Authorize.Commands.Register
 
                 // Hash the password manually
                 user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-                user.UserEmail = user.UserEmail.ToLower();
+                user.UserEmail = user.UserEmail!.ToLower();
 
                 // Add the user to the context (not saved yet)
                 await _authRepository.CreateUserAsync(user);
