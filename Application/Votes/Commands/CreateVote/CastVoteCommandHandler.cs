@@ -1,14 +1,15 @@
-﻿using Application.Interfaces;
-using Application.Votes.Dtos;
-using AutoMapper;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Domain.Common;
 using Domain.Models;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Application.Interfaces;
+using Application.Votes.Commands.CreeateVote;
 using Application.Votes.Dtos;
-using AutoMapper;
 using Application.Votes.Queries;
-using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace Application.Votes.Commands.CreeateVote
 {
@@ -70,13 +71,12 @@ namespace Application.Votes.Commands.CreeateVote
             if (!restResult.IsSuccess)
                 return OperationResult<VoteDto>.Failure("Restaurant not found.");
 
-            // Check existing vote for this round
-            var existingVote = await _voteRepository.AsQueryable()
-                .FirstOrDefaultAsync(v =>
+            // Check existing vote for this round (synchronous)
+            var existingVote = _voteRepository.AsQueryable()
+                .FirstOrDefault(v =>
                     v.UserId == request.UserId &&
                     v.VoteDate == today &&
-                    v.Round == request.Round,
-                    cancellationToken);
+                    v.Round == request.Round);
 
             if (existingVote != null)
             {

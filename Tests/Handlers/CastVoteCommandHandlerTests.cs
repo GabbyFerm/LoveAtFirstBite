@@ -1,125 +1,206 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Domain.Common;
-using Domain.Models;
 using Application.Interfaces;
 using Application.Votes.Commands.CreeateVote;
+using Application.Votes.Handlers;
 using Application.Votes.Dtos;
 using Application.Votes.Queries;
+using Domain.Common;
+using Domain.Models;
 using AutoMapper;
+using MediatR;
+using Moq;
+using NUnit.Framework;
 
-namespace Application.Votes.Commands.CreeateVote
+namespace LoveAtFirstBite.Tests.Handlers
 {
-    public class CastVoteCommandHandler
-        : IRequestHandler<CastVoteCommand, OperationResult<VoteDto>>
+    [TestFixture]
+    public class CastVoteCommandHandlerTests
     {
-        private readonly IGenericRepository<Vote> _voteRepository;
-        private readonly IGenericRepository<User> _userRepository;
-        private readonly IGenericRepository<Restaurant> _restaurantRepository;
-        private readonly IMapper _mapper;
-        private readonly IMediator _mediator;
+        private Mock<IGenericRepository<Vote>> _voteRepoMock;
+        private Mock<IGenericRepository<User>> _userRepoMock;
+        private Mock<IGenericRepository<Restaurant>> _restaurantRepoMock;
+        private Mock<IMapper> _mapperMock;
+        private Mock<IMediator> _mediatorMock;
+        private CastVoteCommandHandler _handler;
 
-        public CastVoteCommandHandler(
-            IGenericRepository<Vote> voteRepository,
-            IGenericRepository<User> userRepository,
-            IGenericRepository<Restaurant> restaurantRepository,
-            IMapper mapper,
-            IMediator mediator
-        )
+        [SetUp]
+        public void SetUp()
         {
-            _voteRepository = voteRepository;
-            _userRepository = userRepository;
-            _restaurantRepository = restaurantRepository;
-            _mapper = mapper;
-            _mediator = mediator;
+            _voteRepoMock = new Mock<IGenericRepository<Vote>>();
+            _userRepoMock = new Mock<IGenericRepository<User>>();
+            _restaurantRepoMock = new Mock<IGenericRepository<Restaurant>>();
+            _mapperMock = new Mock<IMapper>();
+            _mediatorMock = new Mock<IMediator>();
+
+            _handler = new CastVoteCommandHandler(
+                _voteRepoMock.Object,
+                _userRepoMock.Object,
+                _restaurantRepoMock.Object,
+                _mapperMock.Object,
+                _mediatorMock.Object
+            );
         }
 
-        public async Task<OperationResult<VoteDto>> Handle(
-            CastVoteCommand request,
-            CancellationToken cancellationToken)
+        private static DateTime TodayDateOnly() => DateTime.UtcNow.Date;
+
+        [Test]
+        public async Task ExistingVote_SameRestaurantAndRound_ReturnsFailure()
         {
-            var today = DateTime.UtcNow.Date;
+            // Arrange
+            var cmd = new CastVoteCommand(1, 42, round: 1);
 
-            // Tie-break enforcement: only allow voting on tied restaurants in later rounds
-            if (request.Round > 1)
-            {
-                var prevResult = await _mediator.Send(
-                    new GetTodayVoteTallyQuery(request.Round - 1),
-                    cancellationToken);
-                if (!prevResult.IsSuccess)
-                    return OperationResult<VoteDto>.Failure(
-                        "Cannot perform tie-break: failed to fetch previous round.");
-
-                var tiedIds = prevResult.Data!
-                    .Where(x => x.IsLeader)
-                    .Select(x => x.RestaurantId)
-                    .ToHashSet();
-
-                if (!tiedIds.Contains(request.RestaurantId))
-                    return OperationResult<VoteDto>.Failure(
-                        "You can only vote among the tied restaurants for this round.");
-            }
-
-            // Validate user
-            var userResult = await _userRepository.GetByIdAsync(request.UserId);
-            if (!userResult.IsSuccess)
-                return OperationResult<VoteDto>.Failure("User not found.");
-
-            // Validate restaurant
-            var restResult = await _restaurantRepository
-                .GetByIdAsync(request.RestaurantId);
-            if (!restResult.IsSuccess)
-                return OperationResult<VoteDto>.Failure("Restaurant not found.");
-
-            // Check existing vote for this round (synchronous)
-            var existingVote = _voteRepository
-                .AsQueryable()
-                .FirstOrDefault(v =>
-                    v.UserId == request.UserId &&
-                    v.VoteDate == today &&
-                    v.Round == request.Round);
-
-            if (existingVote != null)
-            {
-                if (existingVote.RestaurantId == request.RestaurantId)
+            _userRepoMock
+                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(OperationResult<User>.Success(new User
                 {
-                    return OperationResult<VoteDto>.Failure(
-                        "You’ve already voted for this restaurant this round.");
-                }
+                    UserId = 42,
+                    UserName = "u",
+                    UserEmail = "u@example.com",
+                    PasswordHash = "hash"
+                }));
 
-                // Update the vote target; keep Round unchanged
-                existingVote.RestaurantId = request.RestaurantId;
-                var updateResult = await _voteRepository
-                    .UpdateAsync(existingVote, cancellationToken);
+            _restaurantRepoMock
+                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(OperationResult<Restaurant>.Success(new Restaurant
+                {
+                    RestaurantId = 1,
+                    RestaurantName = "R1",
+                    Address = "Addr1",
+                    CreatedByUserId = 42,
+                    CreatedByUser = new User
+                    {
+                        UserId = 42,
+                        UserName = "u",
+                        UserEmail = "u@example.com",
+                        PasswordHash = "hash"
+                    }
+                }));
 
-                if (!updateResult.IsSuccess)
-                    return OperationResult<VoteDto>.Failure("Failed to update vote.");
-
-                var updatedDto = _mapper.Map<VoteDto>(existingVote);
-                return OperationResult<VoteDto>.Success(updatedDto);
-            }
-
-            // Create a new vote (Round default = 1 or provided)
-            var newVote = new Vote
+            var existing = new Vote
             {
-                UserId = request.UserId,
-                RestaurantId = request.RestaurantId,
-                VoteDate = today,
-                Round = request.Round
+                VoteId = 10,
+                UserId = 42,
+                RestaurantId = 1,
+                VoteDate = TodayDateOnly(),
+                Round = 1
             };
+            _voteRepoMock
+                .Setup(r => r.AsQueryable())
+                .Returns(new List<Vote> { existing }.AsQueryable());
 
-            var createResult = await _voteRepository
-                .AddAsync(newVote, cancellationToken);
+            // Act
+            var result = await _handler.Handle(cmd, CancellationToken.None);
 
-            if (!createResult.IsSuccess)
-                return OperationResult<VoteDto>.Failure("Failed to create vote.");
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            StringAssert.Contains(
+                "already voted for this restaurant",
+                result.ErrorMessage ?? result.Errors?.FirstOrDefault() ?? string.Empty
+            );
+        }
 
-            var savedVote = createResult.Data!;
-            var voteDto = _mapper.Map<VoteDto>(savedVote);
-            return OperationResult<VoteDto>.Success(voteDto);
+        [Test]
+        public async Task ExistingVote_DifferentRestaurant_UpdatesAndReturnsSuccess()
+        {
+            // Arrange
+            var cmd = new CastVoteCommand(2, 42, round: 1);
+
+            _userRepoMock
+                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(OperationResult<User>.Success(new User
+                {
+                    UserId = 42,
+                    UserName = "u",
+                    UserEmail = "u@example.com",
+                    PasswordHash = "hash"
+                }));
+
+            _restaurantRepoMock
+                .Setup(r => r.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(OperationResult<Restaurant>.Success(new Restaurant
+                {
+                    RestaurantId = 2,
+                    RestaurantName = "R2",
+                    Address = "Addr2",
+                    CreatedByUserId = 42,
+                    CreatedByUser = new User
+                    {
+                        UserId = 42,
+                        UserName = "u",
+                        UserEmail = "u@example.com",
+                        PasswordHash = "hash"
+                    }
+                }));
+
+            var original = new Vote
+            {
+                VoteId = 11,
+                UserId = 42,
+                RestaurantId = 1,
+                VoteDate = TodayDateOnly(),
+                Round = 1
+            };
+            _voteRepoMock
+                .Setup(r => r.AsQueryable())
+                .Returns(new List<Vote> { original }.AsQueryable());
+
+            _voteRepoMock
+                .Setup(r => r.UpdateAsync(
+                    It.Is<Vote>(v => v.RestaurantId == 2),
+                    It.IsAny<CancellationToken>()
+                ))
+                .ReturnsAsync(OperationResult<Vote>.Success(original));
+
+            var mappedDto = new VoteDto
+            {
+                RestaurantId = 2,
+                VoteDate = original.VoteDate,
+                Round = 1
+            };
+            _mapperMock
+                .Setup(m => m.Map<VoteDto>(It.IsAny<Vote>()))
+                .Returns(mappedDto);
+
+            // Act
+            var result = await _handler.Handle(cmd, CancellationToken.None);
+
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual(2, result.Data!.RestaurantId);
+            _voteRepoMock.Verify(r => r.UpdateAsync(
+                It.IsAny<Vote>(), It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        [Test]
+        public async Task RoundGreaterThanOne_NonTiedRestaurant_ReturnsFailure()
+        {
+            // Arrange
+            var cmd = new CastVoteCommand(5, 42, round: 2);
+
+            var prev = new List<TodayVoteTallyDto> {
+                new TodayVoteTallyDto { RestaurantId = 3, RestaurantName = "R3", VoteCount = 1, IsLeader = true },
+                new TodayVoteTallyDto { RestaurantId = 4, RestaurantName = "R4", VoteCount = 1, IsLeader = true }
+            };
+            _mediatorMock
+                .Setup(m => m.Send(
+                    It.IsAny<GetTodayVoteTallyQuery>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(OperationResult<List<TodayVoteTallyDto>>.Success(prev));
+
+            // Act
+            var result = await _handler.Handle(cmd, CancellationToken.None);
+
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            StringAssert.Contains(
+                "only vote among the tied restaurants",
+                result.ErrorMessage ?? result.Errors?.FirstOrDefault() ?? string.Empty
+            );
         }
     }
 }
