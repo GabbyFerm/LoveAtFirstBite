@@ -1,11 +1,11 @@
-﻿using Application.Authorize.DTOs;
+﻿using Application.Authorize.Commands.Register;
 using FluentValidation;
 
 namespace Application.Validators
 {
-    public class UserRegisterDtoValidator : AbstractValidator<UserRegisterDto>
+    public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     {
-        public UserRegisterDtoValidator() 
+        public RegisterCommandValidator() 
         {
             // Username must be provided and withing valid length
             RuleFor(user => user.UserName)
