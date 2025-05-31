@@ -42,11 +42,11 @@ namespace Application.Authorize.Commands.Register
                 // Add the user to the context (not saved yet)
                 await _authRepository.CreateUserAsync(user);
 
-                // Try to generate the token (if this fails, no DB changes happen)
-                var token = _jwtGenerator.GenerateToken(user);
-
                 // Save the user only if everything succeeded
                 await _authRepository.SaveChangesAsync();
+
+                // Try to generate the token (if this fails, no DB changes happen)
+                var token = _jwtGenerator.GenerateToken(user);                
 
                 // Return token
                 return OperationResult<string>.Success(token);
