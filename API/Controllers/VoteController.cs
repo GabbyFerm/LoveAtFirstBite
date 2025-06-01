@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Application.Votes.Commands.ChangeVote;
 using Application.Votes.Commands.CreeateVote;
+using Application.Votes.Commands.ResetVotes;
 using Application.Votes.Dtos;
 using Application.Votes.Queries;
-using Domain.Common;
-using System.Security.Claims;
-using Application.Votes.Commands.ResetVotes;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Application.Votes.Commands.ChangeVote;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -22,7 +19,6 @@ namespace API.Controllers
         {
             _mediator = mediator;
         }
-
 
         [HttpPost]
         [Authorize]
@@ -46,11 +42,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-
-
-
-
-
         [HttpPut("Change")]
         [Authorize]
         public async Task<IActionResult> ChangeVote([FromBody] VoteDto voteDto)
@@ -70,8 +61,6 @@ namespace API.Controllers
 
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
-
-
 
             return Ok(new
             {
@@ -101,6 +90,20 @@ namespace API.Controllers
                 return BadRequest(errors);
             }
             return Ok(result.Data);
+        }
+
+        [HttpGet("status/{round}")]
+        [Authorize]
+        public async Task<IActionResult> GetUserVoteStatus(int round)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token.");
+
+            var userId = int.Parse(userIdClaim);
+            var result = await _mediator.Send(new GetUserVoteStatusQuery(userId, round));
+
+            return result.IsSuccess ? Ok(result.Data) : BadRequest(result.ErrorMessage);
         }
     }
 }
