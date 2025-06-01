@@ -11,6 +11,7 @@ namespace Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Vote> Votes { get; set; }
+        public DbSet<Round> Rounds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +44,12 @@ namespace Infrastructure.Data
                 .Property(v => v.Round)
                 .HasDefaultValue(1)       // SQL default = 1
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Round>().HasData(
+                new Round { RoundId = 1, CurrentRound = 1, UpdatedAt = DateTime.UtcNow } // initialize with round 1 if there is no rounds available
+            );
+
+
         }
     }
 }
