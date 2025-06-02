@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Application.Votes.Commands.ChangeVote;
 using Application.Votes.Commands.CreeateVote;
+using Application.Votes.Commands.ResetVotes;
 using Application.Votes.Dtos;
 using Application.Votes.Queries;
-using Domain.Common;
-using System.Security.Claims;
-using Application.Votes.Commands.ResetVotes;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Application.Votes.Commands.ChangeVote;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -45,10 +42,6 @@ namespace API.Controllers
 
             return Ok(result);
         }
-
-
-
-
 
 
         [HttpPut("Change")]
@@ -101,6 +94,18 @@ namespace API.Controllers
                 return BadRequest(errors);
             }
             return Ok(result.Data);
+        }
+
+        [HttpGet("all-votes")]
+        [Authorize]
+        public async Task<IActionResult> GetAllVotes() 
+        { 
+          var result = await _mediator.Send(new GetAllVotesQuery());
+
+            if (!result.IsSuccess)
+                return BadRequest(result.ErrorMessage);
+
+            return Ok(result);
         }
     }
 }
