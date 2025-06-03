@@ -5,7 +5,6 @@ using Domain.Common;
 using Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace Application.Votes.Commands.ChangeVote
 {

@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Application.Votes.Commands.CreeateVote;
-using Application.Votes.Handlers;
 using Application.Votes.Dtos;
 using Application.Votes.Queries;
+using AutoMapper;
 using Domain.Common;
 using Domain.Models;
-using AutoMapper;
 using MediatR;
 using Moq;
-using NUnit.Framework;
 
 namespace LoveAtFirstBite.Tests.Handlers
 {

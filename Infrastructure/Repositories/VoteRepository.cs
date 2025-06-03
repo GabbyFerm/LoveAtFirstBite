@@ -15,7 +15,6 @@ namespace Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-
         public async Task<OperationResult<IEnumerable<Vote>>> GetAllVotesAsync()
         {
             try

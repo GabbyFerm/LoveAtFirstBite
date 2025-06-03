@@ -1,13 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using MediatR;
-using Domain.Common;
-using Application.Votes.Queries;
+﻿using Application.Interfaces;
 using Application.Votes.Dtos;
-using Application.Interfaces;
+using Application.Votes.Queries;
+using Domain.Common;
+using MediatR;
 
 namespace Application.Votes.Handlers
 {

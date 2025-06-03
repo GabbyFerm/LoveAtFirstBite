@@ -1,7 +1,6 @@
 ﻿using Application.Votes.Dtos;
 using Domain.Common;
 using MediatR;
-using System.Text.Json.Serialization;
 
 namespace Application.Votes.Commands.CreeateVote
 {
