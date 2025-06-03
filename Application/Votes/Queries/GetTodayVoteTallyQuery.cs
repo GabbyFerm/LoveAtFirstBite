@@ -1,7 +1,6 @@
-﻿using MediatR;
+﻿using Application.Votes.Dtos;
 using Domain.Common;
-using Application.Votes.Dtos;
-using System.Collections.Generic;
+using MediatR;
 
 namespace Application.Votes.Queries
 {

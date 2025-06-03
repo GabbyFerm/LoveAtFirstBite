@@ -64,8 +64,6 @@ namespace API.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Errors);
 
-
-
             return Ok(new
             {
                 vote = result.Data

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Domain.Common;
-using Domain.Models;
-using Application.Interfaces;
-using Application.Votes.Commands.CreeateVote;
+﻿using Application.Interfaces;
 using Application.Votes.Dtos;
 using Application.Votes.Queries;
 using AutoMapper;
+using Domain.Common;
+using Domain.Models;
+using MediatR;
 
 namespace Application.Votes.Commands.CreeateVote
 {

@@ -1,5 +1,4 @@
 ﻿using Application.Authorize.Commands.Register;
-using Application.Authorize.DTOs;
 using AutoMapper;
 using Domain.Models;
 

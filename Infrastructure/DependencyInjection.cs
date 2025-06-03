@@ -19,8 +19,7 @@ namespace Infrastructure
             services.AddScoped<IJwtGenerator, JWTGenerator>();
             services.AddScoped<IVoteRepository, VoteRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<Application.Interfaces.IRestaurantRepository,
-                          Infrastructure.Repositories.RestaurantRepository>();
+            services.AddScoped<IRestaurantRepository, RestaurantRepository>();
 
             return services;
         }
